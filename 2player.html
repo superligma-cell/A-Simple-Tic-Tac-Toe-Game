@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Simple Game of Tic-Tac-Toe</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .note-wrapper {
+            position: relative;
+            width: fit-content;
+            margin: 30px auto;
+        }
+
+        .note-image {
+            display: block;
+            width: 420px;
+            height: auto;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 95px;
+            left: 46px;
+            display: grid;
+            grid-template-columns: repeat(3, 110px);
+            gap: 6px;
+        }
+
+        .cell {
+            width: 110px;
+            height: 110px;
+            background-color: #a7a7a72e;
+            font-size: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content:  center;
+            cursor: pointer;
+            transition: background-color 0.2 ease;
+            user-select: none;
+            border: none;
+            text-shadow: 1px 1px 2px rgb(92, 92, 92);
+        }
+
+        .cell:hover {
+            background-color: #adadad84;
+        }
+
+        body {
+            background-image: url(background.jpg);
+            background-size: cover;
+            background-position: center;
+            padding-top: 20px;
+        }
+
+
+        .board-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px auto;
+        }
+
+        .side-img {
+            width: 400px;
+            height: auto;
+            opacity: 0.9;
+        }
+
+        .lift-img {
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /*anim*/
+            width: 200px;
+            height: auto;
+            border-radius: 15px;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+        }
+
+        .lift-img:hover {
+            transform: translateY(-5px); /*liftup anim*/
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2) /*subtle shadow*/
+        }
+
+    </style>
+
+
+</head>
+<body class="text-center">
+
+    <div class="container">
+
+        <div class="board-area">
+            <img src="left-sticker-three.png" class="side-img left">
+        
+
+            <div class="justify-content-center note-wrapper" style="margin-bottom: 5px; margin-top: 5px;">
+                <img src="bgboard.png" class="note-image" alt="board" width="200px">
+                <div class="grid-overlay" id="board">
+                    <!--9 .cell divs placed-->
+                </div>
+            </div>
+
+            <img src="right-sticker-one.png" class="side-img right">
+        </div>
+
+        <p class="lead" id="status" style="margin-bottom: 5px;">Player ✖️'s turn!</p>
+
+        <button class="image-btn" onclick="resetGame()" style="background-color: transparent; border-radius: 15px; border: none;">
+            <img src="resetgamebutton.png" alt="resetbtn" style="width: 135px;" class="lift-img">
+        </button>
+
+        <a href="index.html">
+            <img src="returnhpbtn.png" alt="returnhpbtn" class="lift-img" style="width: 150px;">
+        </a>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const status = document.getElementById('status');
+        let currentPlayer = '✖️';
+        let cells = Array(9).fill(null);
+        let gameOver = false;
+    
+    
+
+        function createBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click',handleMove);
+                board.appendChild(cell);
+
+            }
+            status.textContent = "Player ✖️'s turn!";
+        }
+
+        function handleMove(e) {
+            const index = e.target.dataset.index;
+            if (cells[index] || gameOver) return;
+
+            cells[index] = currentPlayer;
+            e.target.textContent = currentPlayer;
+
+            if (checkWinner()) {
+                status.textContent = `Player ${currentPlayer} wins!`;
+                gameOVer = true;
+            } else if (cells.every(cell => cell)) {
+                status.textContent = `A draw!`;
+                gameOver = true;
+            } else {
+                currentPlayer = currentPlayer === '✖️' ? '⭕️' : '✖️';
+                status.textContent = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function checkWinner() {
+            const wins = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+                [0, 4, 8], [2, 4, 6]            // diagonals
+            ];
+            return wins.some(([a, b, c]) =>
+                cells[a] && cells[a] === cells[b] && cells[a] === cells[c]
+            );
+        }
+
+        function resetGame() {
+            currentPlayer = '✖️';
+            cells = Array(9).fill(null);
+            gameOver = false;
+            createBoard();
+        }
+
+        //initialize
+        createBoard();
+
+    </script>    
+
+</body>
+</html>
